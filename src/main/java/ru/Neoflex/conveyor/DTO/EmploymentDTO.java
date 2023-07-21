@@ -2,7 +2,7 @@ package ru.Neoflex.conveyor.DTO;
 
 import java.math.BigDecimal;
 
-record EmploymentDTO(
+public record EmploymentDTO(
         Enum employmentStatus,
         String employerINN,
         BigDecimal salary,

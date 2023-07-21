@@ -3,7 +3,7 @@ package ru.Neoflex.conveyor.DTO;
 import java.math.BigDecimal;
 import java.util.List;
 
-record CreditDTO(
+public record CreditDTO(
         BigDecimal amount,
         Integer term,
         BigDecimal monthlyPayment,

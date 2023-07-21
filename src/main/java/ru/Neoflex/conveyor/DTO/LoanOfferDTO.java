@@ -2,7 +2,7 @@ package ru.Neoflex.conveyor.DTO;
 
 import java.math.BigDecimal;
 
-record LoanOfferDTO(
+public record LoanOfferDTO(
         Long applicationId,
         BigDecimal requestedAmount,
         BigDecimal totalAmount,

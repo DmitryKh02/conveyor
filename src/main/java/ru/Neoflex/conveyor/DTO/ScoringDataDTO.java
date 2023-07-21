@@ -1,15 +1,17 @@
 package ru.Neoflex.conveyor.DTO;
 
+import ru.Neoflex.conveyor.Enum.Gender;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-record ScoringDataDTO(
+public record ScoringDataDTO(
         BigDecimal amount,
         Integer term,
         String firstName,
         String lastName,
         String middleName,
-        Enum gender,
+        Enum<Gender> gender,
         LocalDate birthdate,
         String passportSeries,
         String passportNumber,

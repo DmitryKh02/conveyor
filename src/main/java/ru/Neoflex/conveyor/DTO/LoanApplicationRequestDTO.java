@@ -1,13 +1,17 @@
 package ru.Neoflex.conveyor.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-record LoanApplicationRequestDTO(
+public record LoanApplicationRequestDTO(
         BigDecimal amount,
         Integer term,
         String firstName,
         String lastName,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         String middleName,
         String email,
         LocalDate birthdate,
