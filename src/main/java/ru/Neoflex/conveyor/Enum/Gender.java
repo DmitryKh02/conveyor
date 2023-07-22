@@ -8,5 +8,5 @@ public enum Gender {
     FEMALE("Female"),
     NOT_BINARY("Not Binary");
 
-    private final String genger;
+    private final String gender;
 }
