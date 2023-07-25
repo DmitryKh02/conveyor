@@ -1,0 +1,46 @@
+###
+POST http://localhost:8080/conveyor/offers
+Content-Type: application/json
+
+{
+  "amount": 10000,
+  "term": 12,
+  "firstName": "Anna",
+  "lastName": "Ivanova",
+  "middleName": "Sidorova",
+  "email": "anna@example.com",
+  "birthdate": "1985-05-20",
+  "passportSeries": "1234",
+  "passportNumber": "567890"
+}
+
+###
+POST http://localhost:8080/conveyor/offers
+Content-Type: application/json
+
+{
+  "amount": 15000,
+  "term": 24,
+  "firstName": "Ivan",
+  "lastName": "Petrov",
+  "email": "ivan@example.com",
+  "birthdate": "1990-08-10",
+  "passportSeries": "5678",
+  "passportNumber": "123456"
+}
+
+###
+POST http://localhost:8080/conveyor/offers
+Content-Type: application/json
+
+{
+  "amount": 20000,
+  "term": 36,
+  "firstName": "Alexey",
+  "lastName": "Sidorov",
+  "middleName": "Petrovich",
+  "email": "alexey@example.com",
+  "birthdate": "1988-11-25",
+  "passportSeries": "9876",
+  "passportNumber": "543210"
+}

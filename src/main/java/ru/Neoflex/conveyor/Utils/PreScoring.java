@@ -1,7 +1,7 @@
 package ru.Neoflex.conveyor.Utils;
 
 import org.springframework.stereotype.Component;
-import ru.Neoflex.conveyor.DTO.LoanApplicationRequestDTO;
+import ru.Neoflex.conveyor.DTO.Request.LoanApplicationRequestDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,20 +16,25 @@ public class PreScoring {
     private static final int MINIMAL_TERM = 6;
     public static boolean isInformationCorrect(LoanApplicationRequestDTO loanApplicationRequestDTO) {
         //TODO написать логгер и обработчик ошибок
-        return isValidName(loanApplicationRequestDTO.firstName())
-                && isValidName(loanApplicationRequestDTO.lastName())
-                && isValidName(loanApplicationRequestDTO.middleName())
-                && isValidSum(loanApplicationRequestDTO.amount())
-                && isValidTerm(loanApplicationRequestDTO.term())
-                && isValidBirthday(loanApplicationRequestDTO.birthdate())
-                && isValidEmail(loanApplicationRequestDTO.email())
-                && isValidPassportSeries(loanApplicationRequestDTO.passportSeries())
-                && isValidPassportNumber(loanApplicationRequestDTO.passportNumber());
+        boolean isFirstNameValid = isValidName(loanApplicationRequestDTO.firstName());
+        boolean isLastNameValid = isValidName(loanApplicationRequestDTO.lastName());
+        boolean isMiddleNameValid = isValidName(loanApplicationRequestDTO.middleName());
+        boolean isSumValid = isValidSum(loanApplicationRequestDTO.amount());
+        boolean isTermValid = isValidTerm(loanApplicationRequestDTO.term());
+        boolean isBirthdayValid = isValidBirthday(loanApplicationRequestDTO.birthdate());
+        boolean isEmailValid = isValidEmail(loanApplicationRequestDTO.email());
+        boolean isPassportSeriesValid = isValidPassportSeries(loanApplicationRequestDTO.passportSeries());
+        boolean isPassportNumberValid = isValidPassportNumber(loanApplicationRequestDTO.passportNumber());
+
+        return isFirstNameValid && isLastNameValid && isMiddleNameValid
+                && isSumValid && isTermValid && isBirthdayValid
+                && isEmailValid && isPassportSeriesValid && isPassportNumberValid;
     }
 
     /**
-     * Имя, Фамилия - от 2 до 30 латинских букв.
+     * Имя, Фамилия - от 2 до 30 латинских букв.<p>
      * Отчество, при наличии - от 2 до 30 латинских букв.
+     * <p>
      * @param name любое имя
      * @return true - подходит под паттерн, false - нет
      */
@@ -39,6 +44,7 @@ public class PreScoring {
 
     /**
      * Сумма кредита - действительно число, большее или равное 10000.
+     * <p>
      * @param sum сумма кредита
      * @return  true - подходит под условие, false - нет
      */
@@ -48,15 +54,17 @@ public class PreScoring {
 
     /**
      * Срок кредита - целое число, большее или равное 6.
+     * <p>
      * @param term количество месяцев платежа
      * @return true - подходит под условие, false - нет
      */
-    public static boolean isValidTerm(int term){
+    private static boolean isValidTerm(int term){
         return term >= MINIMAL_TERM;
     }
 
     /**
      * Дата рождения - число в формате гггг-мм-дд, не позднее 18 лет с текущего дня.
+     * <p>
      * @param birthday дата рождения
      * @return true - подходит под условие, false - нет
      */
@@ -66,28 +74,31 @@ public class PreScoring {
 
     /**
      * Email адрес - строка, подходящая под паттерн [\w\.]{2,50}@[\w\.]{2,20}
+     * <p>
      * @param email эллектронная почта пользователя
      * @return true - подходит под условие, false - нет
      */
-    public static boolean isValidEmail(String email) {
+    private static boolean isValidEmail(String email) {
         return email.matches(PATTERN_EMAIL);
     }
 
     /**
      * Серия паспорта - 4 цифры
+     * <p>
      * @param series серия паспорта
      * @return true - подходит под условие, false - нет
      */
-    public static boolean isValidPassportSeries(String series) {
+    private static boolean isValidPassportSeries(String series) {
        return series.matches(PATTERN_SERIES);
     }
 
     /**
      * Номер паспорта - 6 цифр
+     * <p>
      * @param number номер паспорта
      * @return true - подходит под условие, false - нет
      */
-    public static boolean isValidPassportNumber(String number) {
+    private static boolean isValidPassportNumber(String number) {
         return number.matches(PATTERN_NUMBER);
     }
 
