@@ -19,7 +19,7 @@ POST http://localhost:8080/conveyor/offers
 Content-Type: application/json
 
 {
-  "amount": 15000,
+  "amount": 150000,
   "term": 24,
   "firstName": "Ivan",
   "lastName": "Petrov",

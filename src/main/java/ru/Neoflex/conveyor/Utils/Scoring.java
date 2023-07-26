@@ -14,12 +14,12 @@ import java.time.Period;
 @Component
 public class Scoring {
     @Value("${credit.rate}")
-    private static int CREDIT_RATE;
+    private static BigDecimal CREDIT_RATE;
     private static final int TOTAL_WORK_EXPERIENCE = 12;
     private static final int CURRENT_WORK_EXPERIENCE = 3;
     private static boolean isCreditDenied = false;
 
-    public static int getScoring(ScoringDataDTO scoringDataDTO){
+    public static BigDecimal getScoring(ScoringDataDTO scoringDataDTO){
         return CREDIT_RATE;
     }
 
@@ -116,7 +116,7 @@ public class Scoring {
                 if(age >= 35 && age <= 60)
                     rate = -3;
             }
-            case NOT_BINARY -> rate = +3;
+            case NOT_BINARY -> rate = 3;
         }
         return rate;
     }
