@@ -8,9 +8,12 @@ public record PaymentScheduleElement(
         Integer number,
         //Дата платежа
         LocalDate date,
-        //TODO???
+        // Общая сумма платежа
         BigDecimal totalPayment,
+        // Погашение долга
         BigDecimal interestPayment,
+        // Погашение процентов
         BigDecimal debtPayment,
+        // Оставшийся долг
         BigDecimal remainingDebt
 ) {}

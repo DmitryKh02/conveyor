@@ -1,35 +1,75 @@
 package ru.Neoflex.conveyor.Utils;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.Neoflex.conveyor.DTO.Request.ScoringDataDTO;
 import ru.Neoflex.conveyor.Enum.EmploymentStatus;
 import ru.Neoflex.conveyor.Enum.Gender;
+import ru.Neoflex.conveyor.Enum.MaterialStatus;
 import ru.Neoflex.conveyor.Enum.WorkPosition;
+import ru.Neoflex.conveyor.Exception.InvalidDataException;
+import ru.Neoflex.conveyor.Exception.InvalidField;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class Scoring {
-    @Value("${credit.rate}")
-    private static BigDecimal CREDIT_RATE;
     private static final int TOTAL_WORK_EXPERIENCE = 12;
     private static final int CURRENT_WORK_EXPERIENCE = 3;
-    private static boolean isCreditDenied = false;
+    private static final List<InvalidField> INVALID_INFORMATION = new LinkedList<>();
+    private static BigDecimal currentCreditRate;
+    private static boolean IS_CREDIT_DENIED = false;
 
-    public static BigDecimal getScoring(ScoringDataDTO scoringDataDTO){
-        return CREDIT_RATE;
+    /**
+     * Скоринг данных и подсчет финальной ставки (если не отказано в кредите)
+     * @param scoringDataDTO информация о клиенте
+     * @param creditRate зафиксированная ставка
+     * @return итоговая ставка
+     */
+    public static BigDecimal calculateScoring(ScoringDataDTO scoringDataDTO, BigDecimal creditRate){
+        IS_CREDIT_DENIED = false;
+        INVALID_INFORMATION.clear();
+
+        currentCreditRate = creditRate;
+
+        checkCreditAbility(scoringDataDTO);
+
+        return calculateCurrentRate(scoringDataDTO);
     }
 
-    public static boolean getCreditStatus() {
-        return isCreditDenied;
+    /**
+     * Проверка возможности фактической выдачи кредита
+     * @param scoringDataDTO информация о клиенте
+     * @throws InvalidDataException список по которому клиент не может получить кредит
+     */
+    private static void checkCreditAbility(ScoringDataDTO scoringDataDTO) throws InvalidDataException {
+        checkDependentAmount(scoringDataDTO.dependentAmount());
+        checkAmount(scoringDataDTO.amount(),scoringDataDTO.employment().salary());
+        checkAge(scoringDataDTO.birthdate());
+        checkTotalWorkExperience(scoringDataDTO.employment().workExperienceTotal());
+        checkCurrentWorkExperience(scoringDataDTO.employment().workExperienceCurrent());
+
+        if(IS_CREDIT_DENIED) throw new InvalidDataException(INVALID_INFORMATION);
     }
 
-    private static void calculateScoring(){
+    /**
+     * Подсчет итоговой процентной ставки по кредиту
+     * @param scoringDataDTO информация о клиенте
+     * @return итоговая ставка
+     */
+    private static BigDecimal calculateCurrentRate(ScoringDataDTO scoringDataDTO){
+        currentCreditRate = currentCreditRate.add(checkDependentAmount(scoringDataDTO.dependentAmount()));
+        currentCreditRate = currentCreditRate.add(checkWorkPosition(scoringDataDTO.employment().position()));
+        currentCreditRate = currentCreditRate.add(checkEmploymentStatus(scoringDataDTO.employment().employmentStatus()));
+        currentCreditRate = currentCreditRate.add(checkMaterialStatus(scoringDataDTO.maritalStatus()));
+        currentCreditRate = currentCreditRate.add(checkGenderAndAge(scoringDataDTO.gender(),scoringDataDTO.birthdate()));
 
+        return currentCreditRate;
     }
+
 
     /**
      * Рабочий статус:
@@ -41,14 +81,18 @@ public class Scoring {
      * Владелец бизнеса → ставка увеличивается на 3
      * <p>
      * @param status статус рабочего
-     * @return 1 и 3 - увелечение ставки
+     * @return 1 и 3 - увеличение ставки
      */
-    private static int checkEmploymentStatus(EmploymentStatus status){
-        int rate = 0;
+    private static BigDecimal checkEmploymentStatus(EmploymentStatus status){
+        BigDecimal rate = BigDecimal.valueOf(0);
+
         switch (status){
-            case UNEMPLOYED -> isCreditDenied = true;
-            case SELF_EMPLOYED -> rate = 1;
-            case BUSINESS_OWNER -> rate = 3;
+            case UNEMPLOYED -> {
+                addInvalidField("Employment", "Employment cannot be employment for credit");
+                IS_CREDIT_DENIED = true;
+            }
+            case SELF_EMPLOYED -> rate = BigDecimal.valueOf(1);
+            case BUSINESS_OWNER -> rate = BigDecimal.valueOf(3);
         }
         return rate;
     }
@@ -63,11 +107,12 @@ public class Scoring {
      * @param position позиция на работе
      * @return -2 и -4 уменьшение ставки
      */
-    private static int checkWorkPosition(WorkPosition position){
-        int rate = 0;
+    private static BigDecimal checkWorkPosition(WorkPosition position){
+        BigDecimal rate = BigDecimal.valueOf(0);
+
         switch (position){
-            case MIDDLE_MANAGER -> rate = -2;
-            case TOP_MANAGER -> rate = -4;
+            case MIDDLE_MANAGER -> rate = BigDecimal.valueOf(-2);
+            case TOP_MANAGER -> rate = BigDecimal.valueOf(-4);
         }
         return rate;
     }
@@ -79,7 +124,43 @@ public class Scoring {
      * @param salary зарплата
      */
     private static void checkAmount(BigDecimal amount, BigDecimal salary){
-        isCreditDenied = amount.compareTo(salary.multiply(new BigDecimal(20))) <= 0;
+       if(amount.compareTo(salary.multiply(new BigDecimal(20))) > 0) {
+           addInvalidField("Amount and salary", "Amount cannot be bigger then 20*salary");
+           IS_CREDIT_DENIED = true;
+       }
+    }
+
+    /**
+     * Семейное положение:
+     * <p>
+     * Замужем/женат → ставка уменьшается на 3;
+     * <p>
+     * Разведен → ставка увеличивается на 1
+     * <p>
+     * @param status семейное положение
+     * @return -3 уменьшение ставки, +1 увеличение ставки
+     */
+    private static BigDecimal checkMaterialStatus(MaterialStatus status){
+        BigDecimal rate = BigDecimal.valueOf(0);
+
+        switch (status){
+            case MARRIED -> rate = BigDecimal.valueOf(-3);
+            case DIVORCED -> rate = BigDecimal.valueOf(+1);
+        }
+
+        return rate;
+    }
+
+    /**
+     * Количество иждивенцев:
+     * <p>
+     * Больше 1 → ставка увеличивается на 1
+     * <p>
+     * @param dependentAmount количество иждивенцев
+     * @return 1 если больше одного, 0 если меньше или равно
+     */
+    private static BigDecimal checkDependentAmount(Integer dependentAmount){
+        return dependentAmount > 1 ? BigDecimal.valueOf(1) : BigDecimal.valueOf(0);
     }
 
     /**
@@ -89,8 +170,10 @@ public class Scoring {
      */
     private static void checkAge(LocalDate birthday){
         int age = calculateAge(birthday);
-        if(age < 20 || age > 60)
-            isCreditDenied = true;
+        if(age < 20 || age > 60) {
+            addInvalidField("Age", "Age cannot be smaller then 20 and bigger then 60");
+            IS_CREDIT_DENIED = true;
+        }
     }
 
     /**
@@ -103,23 +186,63 @@ public class Scoring {
      * @return -3 уменьшение ставки при соблюдении условий мужчины и женщины <p>
      * +3 - не бинарная личность
      */
-    private static int checkGenderAndAge(Gender gender, LocalDate birthday){
-        int rate = 0;
+    private static BigDecimal checkGenderAndAge(Gender gender, LocalDate birthday){
+        BigDecimal rate = BigDecimal.valueOf(0);
         int age = calculateAge(birthday);
 
         switch (gender){
             case MALE -> {
                 if(age >= 35 && age <= 55)
-                    rate = -3;
+                    rate = BigDecimal.valueOf(-3);
             }
             case FEMALE -> {
                 if(age >= 35 && age <= 60)
-                    rate = -3;
+                    rate = BigDecimal.valueOf(-3);
             }
-            case NOT_BINARY -> rate = 3;
+            case NOT_BINARY -> rate = BigDecimal.valueOf(3);
         }
         return rate;
     }
+
+    /**
+     * Стаж работы:<p>
+     * Общий стаж менее 12 месяцев → отказ
+     * <p>
+     * @param totalWorkExperience общий опыт работы
+     */
+    private static void checkTotalWorkExperience(int totalWorkExperience){
+        if(totalWorkExperience < TOTAL_WORK_EXPERIENCE) {
+            addInvalidField("Total work experience", "Total work experience cannot be smaller then 12 months");
+            IS_CREDIT_DENIED = true;
+        }
+    }
+
+    /**
+     * Стаж работы: <p>
+     * Текущий стаж менее 3 месяцев → отказ
+     * <p>
+     * @param currentWorkExperience текущий опыт работы
+     */
+    private static void checkCurrentWorkExperience(int currentWorkExperience){
+        if(currentWorkExperience < CURRENT_WORK_EXPERIENCE){
+            addInvalidField("Current work experience", "Current work experience cannot be smaller then 3 months");
+            IS_CREDIT_DENIED = true;
+        }
+
+    }
+
+    /**
+     * Добавление неверных полей в ошибку
+     * <p>
+     * @param name имя поля
+     * @param message сообщение для клиента
+     */
+    private static void addInvalidField(String name, String message){
+        InvalidField ex = new InvalidField(name, message);
+        int endOfList = INVALID_INFORMATION.size();
+        INVALID_INFORMATION.add(endOfList, ex);
+    }
+
 
     /**
      * Подсчет возраста из даты
@@ -131,30 +254,5 @@ public class Scoring {
         LocalDate currentDate = LocalDate.now();
         return Period.between(birthdate, currentDate).getYears();
     }
-
-    /**
-     * Стаж работы:<p>
-     * Общий стаж менее 12 месяцев → отказ
-     * <p>
-     * @param totalWorkExperience общий опыт работы
-     */
-    private static void checkTotalWorkExperience(int totalWorkExperience){
-        if(totalWorkExperience < TOTAL_WORK_EXPERIENCE)
-            isCreditDenied = true;
-    }
-
-    /**
-     * Стаж работы: <p>
-     * Текущий стаж менее 3 месяцев → отказ
-     * <p>
-     * @param currentWorkExperience текущий опыт работы
-     */
-    private static void checkCurrentWorkExperience(int currentWorkExperience){
-        if(currentWorkExperience < CURRENT_WORK_EXPERIENCE)
-            isCreditDenied = true;
-    }
-
-
-
 
 }

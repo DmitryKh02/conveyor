@@ -8,8 +8,6 @@ import ru.Neoflex.conveyor.DTO.Request.LoanApplicationRequestDTO;
 import ru.Neoflex.conveyor.DTO.Request.ScoringDataDTO;
 import ru.Neoflex.conveyor.Service.ConveyorService;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/conveyor")
 @RequiredArgsConstructor
@@ -17,7 +15,7 @@ public class ConveyorController {
     private final ConveyorService conveyorService;
 
     @PostMapping(value="/offers")
-    public ResponseEntity<?> calculationPossibleCreditConditions(@Valid @RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO){
+    public ResponseEntity<?> calculationPossibleCreditConditions(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
         return new ResponseEntity<>(conveyorService.calculationPossibleCreditConditions(loanApplicationRequestDTO) , HttpStatus.OK);
     }
 

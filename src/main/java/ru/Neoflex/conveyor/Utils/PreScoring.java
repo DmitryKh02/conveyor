@@ -2,33 +2,62 @@ package ru.Neoflex.conveyor.Utils;
 
 import org.springframework.stereotype.Component;
 import ru.Neoflex.conveyor.DTO.Request.LoanApplicationRequestDTO;
+import ru.Neoflex.conveyor.Exception.InvalidDataException;
+import ru.Neoflex.conveyor.Exception.InvalidField;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class PreScoring {
+    private static final List<InvalidField> INVALID_INFORMATION = new LinkedList<>();
     private static final String PATTERN_NAME = "^[A-Za-z]{2,30}$";
     private static final String PATTERN_EMAIL = "[\\w\\.]{2,50}@[\\w\\.]{2,20}";
     private static final String PATTERN_SERIES = "\\d{4}";
     private static final String PATTERN_NUMBER = "\\d{6}";
     private static final BigDecimal MINIMAL_AMOUNT = BigDecimal.valueOf(10000);
     private static final int MINIMAL_TERM = 6;
-    public static boolean isInformationCorrect(LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        //TODO написать логгер и обработчик ошибок
-        boolean isFirstNameValid = isValidName(loanApplicationRequestDTO.firstName());
-        boolean isLastNameValid = isValidName(loanApplicationRequestDTO.lastName());
-        boolean isMiddleNameValid = isValidName(loanApplicationRequestDTO.middleName());
-        boolean isSumValid = isValidSum(loanApplicationRequestDTO.amount());
-        boolean isTermValid = isValidTerm(loanApplicationRequestDTO.term());
-        boolean isBirthdayValid = isValidBirthday(loanApplicationRequestDTO.birthdate());
-        boolean isEmailValid = isValidEmail(loanApplicationRequestDTO.email());
-        boolean isPassportSeriesValid = isValidPassportSeries(loanApplicationRequestDTO.passportSeries());
-        boolean isPassportNumberValid = isValidPassportNumber(loanApplicationRequestDTO.passportNumber());
 
-        return isFirstNameValid && isLastNameValid && isMiddleNameValid
-                && isSumValid && isTermValid && isBirthdayValid
-                && isEmailValid && isPassportSeriesValid && isPassportNumberValid;
+    /**
+     * Прескоринг данных для дальнейшей выдачи кредита
+     * <p>
+     * @param loanApplicationRequestDTO основная информация о клиенте
+     * @throws InvalidDataException ошибка полученных данных
+     */
+    public static void isInformationCorrect(LoanApplicationRequestDTO loanApplicationRequestDTO) throws InvalidDataException {
+        INVALID_INFORMATION.clear();
+
+        checkInvalidInformation(isValidSum(loanApplicationRequestDTO.amount()), "Amount", "Amount must be greater than or equal to 10000");
+        checkInvalidInformation(isValidTerm(loanApplicationRequestDTO.term()), "Term", "Term must be greater than or equal to 6");
+
+        checkInvalidInformation(isValidName(loanApplicationRequestDTO.firstName()), "First Name", "Invalid first name format");
+        checkInvalidInformation(isValidName(loanApplicationRequestDTO.lastName()), "Last Name", "Invalid last name format");
+        checkInvalidInformation(isValidName(loanApplicationRequestDTO.middleName()), "Middle Name", "Invalid middle name format");
+
+        checkInvalidInformation(isValidEmail(loanApplicationRequestDTO.email()), "Email", "Invalid email format");
+        checkInvalidInformation(isValidBirthday(loanApplicationRequestDTO.birthdate()), "Birthdate", "Birthdate must be a past date and more then 18 years old");
+
+        checkInvalidInformation(isValidPassportSeries(loanApplicationRequestDTO.passportSeries()), "Passport Series", "Invalid passport series format");
+        checkInvalidInformation(isValidPassportNumber(loanApplicationRequestDTO.passportNumber()), "Passport Number", "Invalid passport number format");
+
+        if(!INVALID_INFORMATION.isEmpty()) throw new InvalidDataException(INVALID_INFORMATION);
+    }
+
+    /**
+     * Добавление неверных полей в ошибку
+     * <p>
+     * @param field прошло ли проверку поле
+     * @param name имя поля
+     * @param message сообщение для клиента
+     */
+    private static void checkInvalidInformation(boolean field, String name, String message){
+        if(!field){
+            InvalidField ex = new InvalidField(name, message);
+            int endOfList = INVALID_INFORMATION.size();
+            INVALID_INFORMATION.add(endOfList, ex);
+        }
     }
 
     /**
@@ -69,13 +98,13 @@ public class PreScoring {
      * @return true - подходит под условие, false - нет
      */
     public static boolean isValidBirthday(LocalDate birthday){
-        return birthday.isBefore(LocalDate.now().minusYears(18));
+        return Scoring.calculateAge(birthday) > 18;
     }
 
     /**
      * Email адрес - строка, подходящая под паттерн [\w\.]{2,50}@[\w\.]{2,20}
      * <p>
-     * @param email эллектронная почта пользователя
+     * @param email электронная почта пользователя
      * @return true - подходит под условие, false - нет
      */
     private static boolean isValidEmail(String email) {

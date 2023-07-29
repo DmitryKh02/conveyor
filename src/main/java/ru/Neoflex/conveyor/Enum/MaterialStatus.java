@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum MaterialStatus {
-    POOR("Poor"),
-    MIDDLE_CLASS("Middle class"),
-    FUNDED("Funded"),
-    WELL_ENDOWED("Well endowed");
+    SINGLE("Single"),
+    DIVORCED("Divorced"),
+    MARRIED("Married");
 
     private final String materialStatus;
 }

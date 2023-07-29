@@ -1,6 +1,6 @@
 package ru.Neoflex.conveyor.Exception;
 
-public record Violation(
+public record InvalidField(
         String fieldName,
         String message) {
 }

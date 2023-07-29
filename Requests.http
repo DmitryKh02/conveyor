@@ -9,7 +9,7 @@ Content-Type: application/json
   "lastName": "Ivanova",
   "middleName": "Sidorova",
   "email": "anna@example.com",
-  "birthdate": "1985-05-20",
+  "birthdate": "2000-05-20",
   "passportSeries": "1234",
   "passportNumber": "567890"
 }
@@ -43,4 +43,65 @@ Content-Type: application/json
   "birthdate": "1988-11-25",
   "passportSeries": "9876",
   "passportNumber": "543210"
+}
+
+###
+POST http://localhost:8080/conveyor/calculation
+Content-Type: application/json
+
+{
+  "amount": 20000,
+  "term": 12,
+  "firstName": "John",
+  "lastName": "Doe",
+  "middleName": "Smith",
+  "gender": "MALE",
+  "birthdate": "1990-05-15",
+  "passportSeries": "1234",
+  "passportNumber": "567890",
+  "passportIssueDate": "2010-02-20",
+  "passportIssueBranch": "Passport Office",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 1,
+  "employment": {
+    "employmentStatus": "UNEMPLOYED",
+    "employerINN": "1dfsf",
+    "salary": 0,
+    "position": null,
+    "workExperienceTotal": 0,
+    "workExperienceCurrent": 0
+  },
+  "account": "1234567890",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": false
+}
+
+###
+POST http://localhost:8080/conveyor/calculation
+Content-Type: application/json
+
+{
+  "amount": 216985,
+  "term": 17,
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "gender": "NOT_BINARY",
+  "birthdate": "2002-08-10",
+  "passportSeries": "5678",
+  "passportNumber": "123456",
+  "passportIssueDate": "2005-03-12",
+  "passportIssueBranch": "Local Passport Office",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 2,
+  "employment": {
+    "employmentStatus": "SELF_EMPLOYED",
+    "employerINN": "123456789012",
+    "salary": 30000,
+    "position": "MIDDLE_MANAGER",
+    "workExperienceTotal": 28,
+    "workExperienceCurrent": 5
+  },
+  "account": "9876543210",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
 }
