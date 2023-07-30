@@ -48,13 +48,13 @@ public class PreScoring {
     /**
      * Добавление неверных полей в ошибку
      * <p>
-     * @param field прошло ли проверку поле
-     * @param name имя поля
+     * @param isValid прошло ли проверку поле
+     * @param fieldName имя поля
      * @param message сообщение для клиента
      */
-    private static void checkInvalidInformation(boolean field, String name, String message){
-        if(!field){
-            InvalidField ex = new InvalidField(name, message);
+    private static void checkInvalidInformation(boolean isValid, String fieldName, String message){
+        if(!isValid){
+            InvalidField ex = new InvalidField(fieldName, message);
             int endOfList = INVALID_INFORMATION.size();
             INVALID_INFORMATION.add(endOfList, ex);
         }

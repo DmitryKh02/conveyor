@@ -1,5 +1,6 @@
 package ru.Neoflex.conveyor.Controller.ControllerAdvice;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.Neoflex.conveyor.Exception.InvalidDataException;
@@ -16,4 +17,10 @@ public class ExceptionConveyorHandler {
         return e.getInvalidFields();
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidFormatException.class)
+    public InvalidField onInvalidFormatException(InvalidFormatException e) {
+        return new InvalidField(e.getTargetType().toString(), e.getMessage());
+    }
 }

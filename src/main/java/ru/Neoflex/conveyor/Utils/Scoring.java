@@ -70,6 +70,18 @@ public class Scoring {
         return currentCreditRate;
     }
 
+    /**
+     * Добавление неверных полей в ошибку
+     * <p>
+     * @param name имя поля
+     * @param message сообщение для клиента
+     */
+    private static void addInvalidField(String name, String message){
+        InvalidField ex = new InvalidField(name, message);
+        int endOfList = INVALID_INFORMATION.size();
+        INVALID_INFORMATION.add(endOfList, ex);
+    }
+
 
     /**
      * Рабочий статус:
@@ -93,6 +105,7 @@ public class Scoring {
             }
             case SELF_EMPLOYED -> rate = BigDecimal.valueOf(1);
             case BUSINESS_OWNER -> rate = BigDecimal.valueOf(3);
+            default -> addInvalidField("Employment status", "Please, set one of this variant: UNEMPLOYED, SELF_EMPLOYED, BUSINESS_OWNER");
         }
         return rate;
     }
@@ -229,18 +242,6 @@ public class Scoring {
             IS_CREDIT_DENIED = true;
         }
 
-    }
-
-    /**
-     * Добавление неверных полей в ошибку
-     * <p>
-     * @param name имя поля
-     * @param message сообщение для клиента
-     */
-    private static void addInvalidField(String name, String message){
-        InvalidField ex = new InvalidField(name, message);
-        int endOfList = INVALID_INFORMATION.size();
-        INVALID_INFORMATION.add(endOfList, ex);
     }
 
 

@@ -1,19 +1,27 @@
 package ru.Neoflex.conveyor.DTO.Responce;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Schema(description = "Список платежей")
 public record PaymentScheduleElement(
-        //Номер платежа
+        @Schema(description = "Номер платежа")
         Integer number,
-        //Дата платежа
+
+        @Schema(description = "Дата платежа")
         LocalDate date,
-        // Общая сумма платежа
+
+        @Schema(description = "Общая сумма платежа")
         BigDecimal totalPayment,
-        // Погашение долга
+
+        @Schema(description = "Погашение долга")
         BigDecimal interestPayment,
-        // Погашение процентов
+
+        @Schema(description = "Погашение процентов")
         BigDecimal debtPayment,
-        // Оставшийся долг
+
+        @Schema(description = "Оставшийся долг")
         BigDecimal remainingDebt
 ) {}

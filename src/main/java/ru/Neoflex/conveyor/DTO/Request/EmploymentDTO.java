@@ -1,35 +1,28 @@
 package ru.Neoflex.conveyor.DTO.Request;
 
-import org.springframework.validation.annotation.Validated;
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.Neoflex.conveyor.Enum.EmploymentStatus;
-import ru.Neoflex.conveyor.Enum.Pattern.EmploymentStatusPattern;
-import ru.Neoflex.conveyor.Enum.Pattern.WorkPositionPattern;
 import ru.Neoflex.conveyor.Enum.WorkPosition;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 
-@Validated
+@Schema(description = "Сущность клиента")
 public record EmploymentDTO(
-        @EmploymentStatusPattern(status = {EmploymentStatus.UNEMPLOYED, EmploymentStatus.BUSINESS_OWNER, EmploymentStatus.SELF_EMPLOYED})
-        //Статус работника
+        @Schema(description = "Статус работника")
         EmploymentStatus employmentStatus,
 
-        //ИНН
+        @Schema(description = "ИНН")
         String employerINN,
 
-        //Зарплата по месяцам
+        @Schema(description = "Зарплата в месяц")
         BigDecimal salary,
 
-        @WorkPositionPattern(position = {WorkPosition.MIDDLE_MANAGER, WorkPosition.TOP_MANAGER})
-        //Должность
+        @Schema(description = "Должность")
         WorkPosition position,
 
-        //Полный опыт работы
+        @Schema(description = "Полный опыт работы")
         Integer workExperienceTotal,
 
-        //Опыт последней работы
+        @Schema(description = "Опыт последней работы")
         Integer workExperienceCurrent
 ) {}

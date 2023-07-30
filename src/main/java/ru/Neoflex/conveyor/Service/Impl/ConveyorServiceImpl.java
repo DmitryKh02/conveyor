@@ -72,7 +72,6 @@ public class ConveyorServiceImpl implements ConveyorService {
 
     @Override
     public CreditDTO calculationCreditParameters(ScoringDataDTO scoringDataDTO) {
-
         setCurrentAmount(scoringDataDTO.amount());
         setCurrentTerm(scoringDataDTO.term());
         setCurrentRate(Scoring.calculateScoring(scoringDataDTO, CREDIT_RATE));

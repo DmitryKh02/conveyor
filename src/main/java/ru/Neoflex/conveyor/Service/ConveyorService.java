@@ -1,6 +1,5 @@
 package ru.Neoflex.conveyor.Service;
 
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.Neoflex.conveyor.DTO.Responce.CreditDTO;
 import ru.Neoflex.conveyor.DTO.Request.LoanApplicationRequestDTO;
 import ru.Neoflex.conveyor.DTO.Responce.LoanOfferDTO;

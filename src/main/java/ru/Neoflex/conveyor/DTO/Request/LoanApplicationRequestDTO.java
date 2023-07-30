@@ -1,36 +1,38 @@
 package ru.Neoflex.conveyor.DTO.Request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Schema(description = "Запрос на создание кредитного предложения")
 public record LoanApplicationRequestDTO(
-        //Сумма кредита
+        @Schema(description = "Сумма кредита")
         BigDecimal amount,
 
-        //Срок выдачи кредита в месяцах
+        @Schema(description = "Срок выдачи кредита в месяцах")
         Integer term,
 
-        //Имя
+        @Schema(description = "Имя")
         String firstName,
 
-        //Фамилия
+        @Schema(description = "Фамилия")
         String lastName,
 
+        @Schema(description = "Отчество")
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        //Отчество
         String middleName,
 
-        //E-mail
+        @Schema(description = "E-mail")
         String email,
 
-        //День рождения
+        @Schema(description = "День рождения")
         LocalDate birthdate,
 
-        //Серия паспорта
+        @Schema(description = "Серия паспорта")
         String passportSeries,
 
-        //Номер паспорта
+        @Schema(description = "Номер паспорта")
         String passportNumber
 ) {}

@@ -1,22 +1,32 @@
 package ru.Neoflex.conveyor.DTO.Responce;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
 
+@Schema(description = "Вариант кредитного предложения")
 public record LoanOfferDTO(
-        //ID оффера
+        @Schema(description = "ID офера")
         Long applicationId,
-        //Запрошенная сумма кредита
+
+        @Schema(description = "Запрошенная сумма кредита")
         BigDecimal requestedAmount,
-        //Максимальная сумма выдаваемого кредита
+
+        @Schema(description = "Итоговая сумма выдаваемого кредита")
         BigDecimal totalAmount,
-        //Срок выдачи кредита в месяцах
+
+        @Schema(description = "Срок выдачи кредита в месяцах")
         Integer term,
-        //Месячный платеж
+
+        @Schema(description = "Месячный платеж")
         BigDecimal monthlyPayment,
-        //Ставка по кредиту
+
+        @Schema(description = "Ставка по кредиту")
         BigDecimal rate,
-        //Включена ли страховка
+
+        @Schema(description = "Включена ли страховка")
         Boolean isInsuranceEnabled,
-        //Зарплатный клиент (зарплата в этом банке)
+
+        @Schema(description = "Зарплатный клиент (зарплата в этом банке)")
         Boolean isSalaryClient
 ) {}
