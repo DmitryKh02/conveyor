@@ -34,7 +34,9 @@ public class PreScoring {
 
         checkInvalidInformation(isValidName(loanApplicationRequestDTO.firstName()), "First Name", "Invalid first name format");
         checkInvalidInformation(isValidName(loanApplicationRequestDTO.lastName()), "Last Name", "Invalid last name format");
-        checkInvalidInformation(isValidName(loanApplicationRequestDTO.middleName()), "Middle Name", "Invalid middle name format");
+
+        if (loanApplicationRequestDTO.middleName() != null )
+            checkInvalidInformation(isValidName(loanApplicationRequestDTO.middleName()), "Middle Name", "Invalid middle name format");
 
         checkInvalidInformation(isValidEmail(loanApplicationRequestDTO.email()), "Email", "Invalid email format");
         checkInvalidInformation(isValidBirthday(loanApplicationRequestDTO.birthdate()), "Birthdate", "Birthdate must be a past date and more then 18 years old");
@@ -97,7 +99,7 @@ public class PreScoring {
      * @param birthday дата рождения
      * @return true - подходит под условие, false - нет
      */
-    public static boolean isValidBirthday(LocalDate birthday){
+    private static boolean isValidBirthday(LocalDate birthday){
         return Scoring.calculateAge(birthday) > 18;
     }
 

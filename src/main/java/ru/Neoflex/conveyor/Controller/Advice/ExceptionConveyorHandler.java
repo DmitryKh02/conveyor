@@ -1,4 +1,4 @@
-package ru.Neoflex.conveyor.Controller.ControllerAdvice;
+package ru.Neoflex.conveyor.Controller.Advice;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;

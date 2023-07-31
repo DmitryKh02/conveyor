@@ -46,10 +46,19 @@ public class Scoring {
      * @throws InvalidDataException список по которому клиент не может получить кредит
      */
     private static void checkCreditAbility(ScoringDataDTO scoringDataDTO) throws InvalidDataException {
-        checkDependentAmount(scoringDataDTO.dependentAmount());
+        //Безработный → отказ
+        checkEmploymentStatus(scoringDataDTO.employment().employmentStatus());
+
+        //Сумма займа больше, чем 20 зарплат → отказ
         checkAmount(scoringDataDTO.amount(),scoringDataDTO.employment().salary());
+
+        //Возраст менее 20 или более 60 лет → отказ
         checkAge(scoringDataDTO.birthdate());
+
+        //Общий стаж менее 12 месяцев → отказ
         checkTotalWorkExperience(scoringDataDTO.employment().workExperienceTotal());
+
+        //Текущий стаж менее 3 месяцев → отказ
         checkCurrentWorkExperience(scoringDataDTO.employment().workExperienceCurrent());
 
         if(IS_CREDIT_DENIED) throw new InvalidDataException(INVALID_INFORMATION);
@@ -100,7 +109,7 @@ public class Scoring {
 
         switch (status){
             case UNEMPLOYED -> {
-                addInvalidField("Employment", "Employment cannot be employment for credit");
+                addInvalidField("Employment", "Status cannot be unemployed for a credit!");
                 IS_CREDIT_DENIED = true;
             }
             case SELF_EMPLOYED -> rate = BigDecimal.valueOf(1);
@@ -138,7 +147,7 @@ public class Scoring {
      */
     private static void checkAmount(BigDecimal amount, BigDecimal salary){
        if(amount.compareTo(salary.multiply(new BigDecimal(20))) > 0) {
-           addInvalidField("Amount and salary", "Amount cannot be bigger then 20*salary");
+           addInvalidField("Amount and salary", "Amount cannot be more than 20 salaries");
            IS_CREDIT_DENIED = true;
        }
     }
@@ -184,7 +193,7 @@ public class Scoring {
     private static void checkAge(LocalDate birthday){
         int age = calculateAge(birthday);
         if(age < 20 || age > 60) {
-            addInvalidField("Age", "Age cannot be smaller then 20 and bigger then 60");
+            addInvalidField("Age", "Age cannot be less than 20 and more than 60");
             IS_CREDIT_DENIED = true;
         }
     }
@@ -225,7 +234,7 @@ public class Scoring {
      */
     private static void checkTotalWorkExperience(int totalWorkExperience){
         if(totalWorkExperience < TOTAL_WORK_EXPERIENCE) {
-            addInvalidField("Total work experience", "Total work experience cannot be smaller then 12 months");
+            addInvalidField("Total work experience", "Total work experience cannot be less than 12 months");
             IS_CREDIT_DENIED = true;
         }
     }
@@ -238,7 +247,7 @@ public class Scoring {
      */
     private static void checkCurrentWorkExperience(int currentWorkExperience){
         if(currentWorkExperience < CURRENT_WORK_EXPERIENCE){
-            addInvalidField("Current work experience", "Current work experience cannot be smaller then 3 months");
+            addInvalidField("Current work experience", "Current work experience cannot be less than 3 months");
             IS_CREDIT_DENIED = true;
         }
 

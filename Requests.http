@@ -40,7 +40,7 @@ Content-Type: application/json
   "lastName": "Sidorov",
   "middleName": "Petrovich",
   "email": "alexey@example.com",
-  "birthdate": "1988-11-25",
+  "birthdate": "2020-11-25",
   "passportSeries": "9876",
   "passportNumber": "543210"
 }
@@ -86,7 +86,7 @@ Content-Type: application/json
   "firstName": "Jane",
   "lastName": "Smith",
   "gender": "NOT_BINARY",
-  "birthdate": "2002-08-10",
+  "birthdate": "2000-08-10",
   "passportSeries": "5678",
   "passportNumber": "123456",
   "passportIssueDate": "2005-03-12",
@@ -99,7 +99,7 @@ Content-Type: application/json
     "salary": 30000,
     "position": "MIDDLE_MANAGER",
     "workExperienceTotal": 28,
-    "workExperienceCurrent": 5
+    "workExperienceCurrent": 12
   },
   "account": "9876543210",
   "isInsuranceEnabled": true,
