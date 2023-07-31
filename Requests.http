@@ -1,4 +1,4 @@
-###
+### валидные данные
 POST http://localhost:8080/conveyor/offers
 Content-Type: application/json
 
@@ -14,7 +14,7 @@ Content-Type: application/json
   "passportNumber": "567890"
 }
 
-###
+### не валидные данные
 POST http://localhost:8080/conveyor/offers
 Content-Type: application/json
 
@@ -23,29 +23,13 @@ Content-Type: application/json
   "term": 24,
   "firstName": "Ivan",
   "lastName": "Petrov",
-  "email": "ivan@example.com",
-  "birthdate": "1990-08-10",
-  "passportSeries": "5678",
-  "passportNumber": "123456"
+  "email": "@example.com",
+  "birthdate": "2020-08-10",
+  "passportSeries": "56785",
+  "passportNumber": "1234568"
 }
 
-###
-POST http://localhost:8080/conveyor/offers
-Content-Type: application/json
-
-{
-  "amount": 20000,
-  "term": 36,
-  "firstName": "Alexey",
-  "lastName": "Sidorov",
-  "middleName": "Petrovich",
-  "email": "alexey@example.com",
-  "birthdate": "2020-11-25",
-  "passportSeries": "9876",
-  "passportNumber": "543210"
-}
-
-###
+### не валидные данные
 POST http://localhost:8080/conveyor/calculation
 Content-Type: application/json
 
@@ -76,13 +60,13 @@ Content-Type: application/json
   "isSalaryClient": false
 }
 
-###
+### валидные данные
 POST http://localhost:8080/conveyor/calculation
 Content-Type: application/json
 
 {
-  "amount": 216985,
-  "term": 17,
+  "amount": 100000,
+  "term": 4,
   "firstName": "Jane",
   "lastName": "Smith",
   "gender": "NOT_BINARY",

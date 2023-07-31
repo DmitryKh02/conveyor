@@ -51,7 +51,7 @@ public class ConveyorServiceImpl implements ConveyorService {
         setCurrentAmount(loanApplicationRequestDTO.amount());
         setCurrentTerm(loanApplicationRequestDTO.term());
 
-        BigDecimal fullCreditInsurance = calculateFullCreditInsurance();
+        BigDecimal fullCreditInsurance = calculateFullCreditInsurance(INSURANCE);
 
         List<LoanOfferDTO> responceList = new ArrayList<>();
 
@@ -77,7 +77,7 @@ public class ConveyorServiceImpl implements ConveyorService {
         setCurrentRate(Scoring.calculateScoring(scoringDataDTO, CREDIT_RATE));
 
         BigDecimal monthlyPayment = calculateAnnuityPayment(currentRate);
-        BigDecimal psk = calculatePSK();
+        BigDecimal psk = calculatePSK(INSURANCE);
 
 
         return new CreditDTO(
@@ -100,7 +100,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @param isSalaryClient зарплатный ли клиент
      * @return запись предложения по кредиту
      */
-    private LoanOfferDTO getLoanOfferDTO(Long id,
+    protected LoanOfferDTO getLoanOfferDTO(Long id,
                                          BigDecimal fullCreditInsurance,
                                          boolean isInsuranceEnabled,
                                          boolean isSalaryClient){
@@ -146,7 +146,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @param creditRate ставка по кредиту
      * @return ежемесячный аннуитетный платеж
      */
-    private BigDecimal calculateAnnuityPayment(BigDecimal creditRate) {
+    protected BigDecimal calculateAnnuityPayment(BigDecimal creditRate) {
         // Преобразуем процентную ставку в долю
         double r = creditRate.doubleValue()/100/12;
         // Расчет аннуитетного коэффициента
@@ -166,8 +166,8 @@ public class ConveyorServiceImpl implements ConveyorService {
      * <p>
      * @return итоговая стоимость страховки
      */
-    private BigDecimal calculateFullCreditInsurance(){
-        return INSURANCE.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(currentAmount);
+    protected BigDecimal calculateFullCreditInsurance(BigDecimal insurance){
+        return insurance.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(currentAmount);
     }
 
     /**
@@ -184,16 +184,18 @@ public class ConveyorServiceImpl implements ConveyorService {
      * <p>
      * @return полная стоимость кредита
      */
-    private BigDecimal calculatePSK(){
-        BigDecimal fullCreditInsurance = calculateFullCreditInsurance();
+    protected BigDecimal calculatePSK(BigDecimal insurance){
+        BigDecimal fullCreditInsurance = calculateFullCreditInsurance(insurance);
         BigDecimal totalLoanCost = calculateTotalLoanCost(fullCreditInsurance);
-        BigDecimal creditYears = BigDecimal.valueOf(currentTerm).divide(BigDecimal.valueOf(12), RoundingMode.HALF_DOWN);
 
-        return totalLoanCost
-                .divide(currentAmount, RoundingMode.HALF_DOWN)
-                .subtract(BigDecimal.ONE)
-                .divide(creditYears, RoundingMode.HALF_DOWN)
-                .multiply(BigDecimal.valueOf(100));
+        BigDecimal creditYears = BigDecimal.valueOf(currentTerm).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_DOWN);
+
+       return totalLoanCost
+               .divide(currentAmount, 4, RoundingMode.HALF_DOWN)
+               .subtract(BigDecimal.ONE)
+               .divide(creditYears,4, RoundingMode.HALF_DOWN)
+               .multiply(BigDecimal.valueOf(100))
+               .setScale(2,RoundingMode.HALF_DOWN);
     }
 
     /**
@@ -202,7 +204,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @param insuranceCost стоимость страховки для кредита
      * @return сумма всех выплат
      */
-    public BigDecimal calculateTotalLoanCost(BigDecimal insuranceCost) {
+    protected BigDecimal calculateTotalLoanCost(BigDecimal insuranceCost) {
         BigDecimal monthlyPayment = calculateAnnuityPayment(currentRate);
         return monthlyPayment.multiply(BigDecimal.valueOf(currentTerm)).add(insuranceCost);
     }
@@ -218,7 +220,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @param monthlyPayment месячный платеж по кредиту
      * @return список платежей
      */
-    public List<PaymentScheduleElement> calculatePaymentSchedule(BigDecimal monthlyPayment) {
+    protected List<PaymentScheduleElement> calculatePaymentSchedule(BigDecimal monthlyPayment) {
         //Месячная процентная ставка (должна быть в долях, не в процентах)
         BigDecimal r;
 
