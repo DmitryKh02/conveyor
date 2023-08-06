@@ -3,7 +3,7 @@ POST http://localhost:8080/conveyor/offers
 Content-Type: application/json
 
 {
-  "amount": 10000,
+  "amount": 100000,
   "term": 12,
   "firstName": "Anna",
   "lastName": "Ivanova",
@@ -27,6 +27,36 @@ Content-Type: application/json
   "birthdate": "2020-08-10",
   "passportSeries": "56785",
   "passportNumber": "1234568"
+}
+
+### валидные данные
+POST http://localhost:8080/conveyor/calculation
+Content-Type: application/json
+
+{
+  "amount": 100000,
+  "term": 4,
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "gender": "NOT_BINARY",
+  "birthdate": "2000-08-10",
+  "passportSeries": "5678",
+  "passportNumber": "123456",
+  "passportIssueDate": "2005-03-12",
+  "passportIssueBranch": "Local Passport Office",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 2,
+  "employment": {
+    "employmentStatus": "SELF_EMPLOYED",
+    "employerINN": "123456789012",
+    "salary": 30000,
+    "position": "MIDDLE_MANAGER",
+    "workExperienceTotal": 28,
+    "workExperienceCurrent": 12
+  },
+  "account": "9876543210",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
 }
 
 ### не валидные данные
@@ -60,32 +90,3 @@ Content-Type: application/json
   "isSalaryClient": false
 }
 
-### валидные данные
-POST http://localhost:8080/conveyor/calculation
-Content-Type: application/json
-
-{
-  "amount": 100000,
-  "term": 4,
-  "firstName": "Jane",
-  "lastName": "Smith",
-  "gender": "NOT_BINARY",
-  "birthdate": "2000-08-10",
-  "passportSeries": "5678",
-  "passportNumber": "123456",
-  "passportIssueDate": "2005-03-12",
-  "passportIssueBranch": "Local Passport Office",
-  "maritalStatus": "MARRIED",
-  "dependentAmount": 2,
-  "employment": {
-    "employmentStatus": "SELF_EMPLOYED",
-    "employerINN": "123456789012",
-    "salary": 30000,
-    "position": "MIDDLE_MANAGER",
-    "workExperienceTotal": 28,
-    "workExperienceCurrent": 12
-  },
-  "account": "9876543210",
-  "isInsuranceEnabled": true,
-  "isSalaryClient": true
-}
