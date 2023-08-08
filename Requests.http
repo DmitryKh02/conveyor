@@ -1,0 +1,92 @@
+### валидные данные
+POST http://localhost:8080/conveyor/offers
+Content-Type: application/json
+
+{
+  "amount": 100000,
+  "term": 12,
+  "firstName": "Anna",
+  "lastName": "Ivanova",
+  "middleName": "Sidorova",
+  "email": "anna@example.com",
+  "birthdate": "2000-05-20",
+  "passportSeries": "1234",
+  "passportNumber": "567890"
+}
+
+### не валидные данные
+POST http://localhost:8080/conveyor/offers
+Content-Type: application/json
+
+{
+  "amount": 150000,
+  "term": 24,
+  "firstName": "Ivan",
+  "lastName": "Petrov",
+  "email": "@example.com",
+  "birthdate": "2020-08-10",
+  "passportSeries": "56785",
+  "passportNumber": "1234568"
+}
+
+### валидные данные
+POST http://localhost:8080/conveyor/calculation
+Content-Type: application/json
+
+{
+  "amount": 100000,
+  "term": 4,
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "gender": "NOT_BINARY",
+  "birthdate": "2000-08-10",
+  "passportSeries": "5678",
+  "passportNumber": "123456",
+  "passportIssueDate": "2005-03-12",
+  "passportIssueBranch": "Local Passport Office",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 2,
+  "employment": {
+    "employmentStatus": "SELF_EMPLOYED",
+    "employerINN": "123456789012",
+    "salary": 30000,
+    "position": "MIDDLE_MANAGER",
+    "workExperienceTotal": 28,
+    "workExperienceCurrent": 12
+  },
+  "account": "9876543210",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
+}
+
+### не валидные данные
+POST http://localhost:8080/conveyor/calculation
+Content-Type: application/json
+
+{
+  "amount": 20000,
+  "term": 12,
+  "firstName": "John",
+  "lastName": "Doe",
+  "middleName": "Smith",
+  "gender": "MALE",
+  "birthdate": "1990-05-15",
+  "passportSeries": "1234",
+  "passportNumber": "567890",
+  "passportIssueDate": "2010-02-20",
+  "passportIssueBranch": "Passport Office",
+  "maritalStatus": "MARRIED",
+  "dependentAmount": 1,
+  "employment": {
+    "employmentStatus": "UNEMPLOYED",
+    "employerINN": "1dfsf",
+    "salary": 0,
+    "position": "TOP_MANAGER",
+    "workExperienceTotal": 0,
+    "workExperienceCurrent": 0
+  },
+  "account": "1234567890",
+  "isInsuranceEnabled": true,
+  "isSalaryClient": false
+}
+

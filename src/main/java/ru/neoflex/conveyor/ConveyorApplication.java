@@ -1,4 +1,4 @@
-package ru.Neoflex.conveyor;
+package ru.neoflex.conveyor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
