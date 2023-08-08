@@ -81,7 +81,7 @@ Content-Type: application/json
     "employmentStatus": "UNEMPLOYED",
     "employerINN": "1dfsf",
     "salary": 0,
-    "position": null,
+    "position": "TOP_MANAGER",
     "workExperienceTotal": 0,
     "workExperienceCurrent": 0
   },

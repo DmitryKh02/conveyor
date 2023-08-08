@@ -84,10 +84,9 @@ class ConveyorControllerTest {
         when(conveyorService.calculationPossibleCreditConditions(loanApplicationRequestDTO)).thenReturn(expectedLoanOffers);
 
         mockMvc.perform(post("/conveyor/offers")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loanApplicationRequestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(4)))

@@ -10,7 +10,7 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>ru.Neoflex</groupId>
+	<groupId>ru.neoflex</groupId>
 	<artifactId>conveyor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>conveyor</name>

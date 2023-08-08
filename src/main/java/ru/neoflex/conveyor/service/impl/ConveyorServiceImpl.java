@@ -49,7 +49,7 @@ public class ConveyorServiceImpl implements ConveyorService {
 
     @Override
     public List<LoanOfferDTO> calculationPossibleCreditConditions(LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        log.trace("ConveyorServiceImpl.calculationPossibleCreditConditions - internal data" + loanApplicationRequestDTO);
+        log.trace("ConveyorServiceImpl.calculationPossibleCreditConditions - internal data: {}", loanApplicationRequestDTO);
 
         preScoring.isInformationCorrect(loanApplicationRequestDTO);
 
@@ -58,7 +58,7 @@ public class ConveyorServiceImpl implements ConveyorService {
 
         BigDecimal fullCreditInsurance = calculateFullCreditInsurance(insurance);
 
-        log.debug("ConveyorServiceImpl.calculationPossibleCreditConditions - full credit insurance: " + fullCreditInsurance);
+        log.debug("ConveyorServiceImpl.calculationPossibleCreditConditions - full credit insurance: {} ", fullCreditInsurance);
 
         List<LoanOfferDTO> responseList = new ArrayList<>(4);
 
@@ -73,13 +73,13 @@ public class ConveyorServiceImpl implements ConveyorService {
                     salaryOptions[i]
             ));
         }
-        log.trace("ConveyorServiceImpl.calculationPossibleCreditConditions - list of loanOfferDTO: " + responseList);
+        log.trace("ConveyorServiceImpl.calculationPossibleCreditConditions - list of loanOfferDTO: {}", responseList);
         return responseList;
     }
 
     @Override
     public CreditDTO calculationCreditParameters(ScoringDataDTO scoringDataDTO) {
-        log.debug("ConveyorServiceImpl.calculationCreditParameters - internal data: " + scoringDataDTO.toString());
+        log.debug("ConveyorServiceImpl.calculationCreditParameters - internal data: {}", scoringDataDTO);
 
         setCurrentAmount(scoringDataDTO.amount());
         setCurrentTerm(scoringDataDTO.term());
@@ -98,7 +98,7 @@ public class ConveyorServiceImpl implements ConveyorService {
                 scoringDataDTO.isSalaryClient(),
                 calculatePaymentSchedule(monthlyPayment));
 
-        log.debug("ConveyorServiceImpl.calculationCreditParameters - creditDTO: " + creditDTO);
+        log.debug("ConveyorServiceImpl.calculationCreditParameters - creditDTO: {}", creditDTO);
 
         return creditDTO;
     }
@@ -118,11 +118,11 @@ public class ConveyorServiceImpl implements ConveyorService {
                                            boolean isInsuranceEnabled,
                                            boolean isSalaryClient) {
 
-        log.debug("ConveyorServiceImpl.getLoanOfferDTO - internal data: "
-                + id + " "
-                + fullCreditInsurance.toString() + " "
-                + isInsuranceEnabled + " "
-                + isSalaryClient);
+        log.debug("ConveyorServiceImpl.getLoanOfferDTO - internal data: id {}, fullCreditInsurance {}, isInsuranceEnabled {}, isSalaryClient{}",
+                id,
+                fullCreditInsurance,
+                isInsuranceEnabled,
+                isSalaryClient);
 
         BigDecimal totalAmount = currentAmount;
         BigDecimal monthlyPayment;
@@ -149,7 +149,7 @@ public class ConveyorServiceImpl implements ConveyorService {
                 isInsuranceEnabled,
                 isSalaryClient);
 
-        log.debug("ConveyorServiceImpl.getLoanOfferDTO - loanOfferDTO: " + loanOfferDTO);
+        log.debug("ConveyorServiceImpl.getLoanOfferDTO - loanOfferDTO: {}", loanOfferDTO);
 
         return loanOfferDTO;
     }
@@ -172,7 +172,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @return ежемесячный аннуитетный платеж
      */
     protected BigDecimal calculateAnnuityPayment(BigDecimal creditRate) {
-        log.debug("ConveyorServiceImpl.calculateAnnuityPayment - internal data: " + creditRate.toString());
+        log.debug("ConveyorServiceImpl.calculateAnnuityPayment - internal data: {}", creditRate);
 
         // Преобразуем процентную ставку в долю
         double rate = creditRate.doubleValue() / 100 / 12;
@@ -182,7 +182,7 @@ public class ConveyorServiceImpl implements ConveyorService {
         // Расчет аннуитетного платежа
         BigDecimal annuityPayment = currentAmount.multiply(BigDecimal.valueOf(annuityCoefficient)).setScale(2, RoundingMode.HALF_UP);
 
-        log.debug("ConveyorServiceImpl.calculateAnnuityPayment - annuity payment: " + annuityPayment);
+        log.debug("ConveyorServiceImpl.calculateAnnuityPayment - annuity payment: {}", annuityPayment);
 
         return annuityPayment;
     }
@@ -199,11 +199,11 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @return итоговая стоимость страховки
      */
     protected BigDecimal calculateFullCreditInsurance(BigDecimal insurance) {
-        log.debug("ConveyorServiceImpl.calculateFullCreditInsurance - internal data: " + insurance.toString());
+        log.debug("ConveyorServiceImpl.calculateFullCreditInsurance - internal data: {}", insurance);
 
         BigDecimal fullCreditInsurance = insurance.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).multiply(currentAmount);
 
-        log.debug("ConveyorServiceImpl.calculateFullCreditInsurance - full credit insurance: " + fullCreditInsurance);
+        log.debug("ConveyorServiceImpl.calculateFullCreditInsurance - full credit insurance: {}", fullCreditInsurance);
 
         return fullCreditInsurance;
     }
@@ -224,7 +224,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @return полная стоимость кредита
      */
     protected BigDecimal calculatePSK(BigDecimal insurance) {
-        log.debug("ConveyorServiceImpl.calculatePSK - internal data: " + insurance.toString());
+        log.debug("ConveyorServiceImpl.calculatePSK - internal data: {}", insurance);
 
         BigDecimal fullCreditInsurance = calculateFullCreditInsurance(insurance);
         BigDecimal totalLoanCost = calculateTotalCreditCost(fullCreditInsurance);
@@ -238,7 +238,7 @@ public class ConveyorServiceImpl implements ConveyorService {
                 .multiply(BigDecimal.valueOf(100))
                 .setScale(2, RoundingMode.HALF_DOWN);
 
-        log.debug("ConveyorServiceImpl.calculatePSK - psk: " + psk);
+        log.debug("ConveyorServiceImpl.calculatePSK - psk: {}", psk);
 
         return psk;
     }
@@ -251,12 +251,12 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @return сумма всех выплат
      */
     protected BigDecimal calculateTotalCreditCost(BigDecimal insuranceCost) {
-        log.debug("ConveyorServiceImpl.calculateTotalCreditCost - internal data: " + insuranceCost.toString());
+        log.debug("ConveyorServiceImpl.calculateTotalCreditCost - internal data: {}", insuranceCost);
 
         BigDecimal monthlyPayment = calculateAnnuityPayment(currentRate);
         BigDecimal totalCreditCost = monthlyPayment.multiply(BigDecimal.valueOf(currentTerm)).add(insuranceCost);
 
-        log.debug("ConveyorServiceImpl.calculateTotalCreditCost - total credit cost: " + totalCreditCost);
+        log.debug("ConveyorServiceImpl.calculateTotalCreditCost - total credit cost: {}", totalCreditCost);
 
         return totalCreditCost;
     }
@@ -274,7 +274,7 @@ public class ConveyorServiceImpl implements ConveyorService {
      * @return список платежей
      */
     protected List<PaymentScheduleElement> calculatePaymentSchedule(BigDecimal monthlyPayment) {
-        log.debug("ConveyorServiceImpl.calculatePaymentSchedule - internal data: " + monthlyPayment.toString());
+        log.debug("ConveyorServiceImpl.calculatePaymentSchedule - internal data: {}", monthlyPayment);
 
         //Месячная процентная ставка (должна быть в долях, не в процентах)
         BigDecimal rate;
@@ -294,22 +294,20 @@ public class ConveyorServiceImpl implements ConveyorService {
 
             //Считаем месячную процентную ставку в долях (1)
             rate = currentRate.divide(BigDecimal.valueOf(1200), 8, RoundingMode.HALF_DOWN);
-            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - rate: " + rate);
+            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - rate: {}", rate);
 
             //Считаем погашение процентов (2)
             debtPayment = remainingDebt.multiply(rate).setScale(2, RoundingMode.HALF_DOWN);
-            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - debt payment: " + debtPayment);
+            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - debt payment: {}", debtPayment);
 
             //Считаем погашение долга (3)
             interestPayment = monthlyPayment.subtract(debtPayment);
-            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - interest payment: " + interestPayment);
+            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - interest payment: {}", interestPayment);
 
             //Считаем остаток долга
             remainingDebt = remainingDebt.subtract(interestPayment);
-            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - remaining debt : " + remainingDebt);
+            log.debug("ConveyorServiceImpl.calculatePaymentSchedule - remaining debt : {}", remainingDebt);
 
-
-            // TODO какую дату платежа выставлять???
             LocalDate paymentDate = LocalDate.now().plusMonths(i);
 
             PaymentScheduleElement payment = new PaymentScheduleElement(
@@ -323,7 +321,7 @@ public class ConveyorServiceImpl implements ConveyorService {
             paymentSchedule.add(payment);
         }
 
-        log.debug("ConveyorServiceImpl.calculatePaymentSchedule - payment schedule: " + paymentSchedule);
+        log.debug("ConveyorServiceImpl.calculatePaymentSchedule - payment schedule: {}", paymentSchedule);
 
         return paymentSchedule;
     }

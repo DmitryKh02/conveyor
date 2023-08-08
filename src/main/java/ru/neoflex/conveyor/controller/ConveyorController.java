@@ -30,18 +30,24 @@ public class ConveyorController {
     @PostMapping(value = "/offers")
     @Operation(summary = "Работа с оферами", description = "Прескоринг данных и создание 4 кредитных предложений")
     public ResponseEntity<List<LoanOfferDTO>> calculationPossibleCreditConditions(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        log.trace("/conveyor/offers Request: " + loanApplicationRequestDTO.toString());
+        log.trace("/conveyor/offers Request: {} ", loanApplicationRequestDTO);
+
         List<LoanOfferDTO> loanOfferDTOS = conveyorService.calculationPossibleCreditConditions(loanApplicationRequestDTO);
-        log.trace("/conveyor/offers Response: " + loanOfferDTOS.toString());
+
+        log.trace("/conveyor/offers Response: {} ", loanOfferDTOS);
+
         return ResponseEntity.status(HttpStatus.OK).body(loanOfferDTOS);
     }
 
     @PostMapping(value = "/calculation")
     @Operation(summary = "Калькулятор кредита", description = "Скоринг данных и создание полностью готового кредитного предложения со всеми расчетами")
     public ResponseEntity<CreditDTO> calculationCreditParameters(@RequestBody ScoringDataDTO scoringDataDTO) {
-        log.trace("/conveyor/calculation Request: " + scoringDataDTO);
+        log.trace("/conveyor/calculation Request: {} ", scoringDataDTO);
+
         CreditDTO creditDTO = conveyorService.calculationCreditParameters(scoringDataDTO);
-        log.trace("/conveyor/calculation Response: " + creditDTO);
+
+        log.trace("/conveyor/calculation Response: {} ", creditDTO);
+
         return ResponseEntity.status(HttpStatus.OK).body(creditDTO);
     }
 }

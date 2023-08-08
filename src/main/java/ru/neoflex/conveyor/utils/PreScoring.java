@@ -31,7 +31,7 @@ public class PreScoring {
      * @throws InvalidDataException ошибка полученных данных
      */
     public void isInformationCorrect(LoanApplicationRequestDTO loanApplicationRequestDTO) throws InvalidDataException {
-        log.debug("PreScoring internal data: "+ loanApplicationRequestDTO);
+        log.debug("PreScoring internal data: {}", loanApplicationRequestDTO);
         invalidInformation.clear();
 
         checkInvalidInformation(isValidSum(loanApplicationRequestDTO.amount()), "Amount", "Amount must be greater than or equal to 10000");
@@ -50,7 +50,7 @@ public class PreScoring {
         checkInvalidInformation(isValidPassportNumber(loanApplicationRequestDTO.passportNumber()), "Passport Number", "Invalid passport number format");
 
         if(!invalidInformation.isEmpty()) {
-            log.warn("PreScorning invalid internal data: " + invalidInformation);
+            log.warn("PreScorning invalid internal data: {}", invalidInformation);
             throw new InvalidDataException(invalidInformation);
         }
 
