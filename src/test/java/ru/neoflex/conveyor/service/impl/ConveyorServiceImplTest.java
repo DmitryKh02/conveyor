@@ -1,7 +1,6 @@
 package ru.neoflex.conveyor.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,18 +39,11 @@ class ConveyorServiceImplTest {
 
     private static final BigDecimal INSURANCE = BigDecimal.valueOf(1);
 
-    @BeforeEach
-    public void setup() {
-        conveyorService.setCurrentAmount(BigDecimal.valueOf(100000)); // Выставление кредита для тестирования
-        conveyorService.setCurrentTerm(12); // Выставление срока для тестирования
-        conveyorService.setCurrentRate(BigDecimal.valueOf(8.5)); // Выставление ставки для тестирования
-    }
-
     @Test
     void ConveyorService_CalculateAnnuityPayment_ReturnAnnuityPayment() {
         BigDecimal expectedPayment = BigDecimal.valueOf(8721.98).setScale(2, RoundingMode.HALF_UP); // Ожидаемый результат
 
-        BigDecimal actualPayment = conveyorService.calculateAnnuityPayment(BigDecimal.valueOf(8.5));
+        BigDecimal actualPayment = conveyorService.calculateAnnuityPayment(BigDecimal.valueOf(8.5), BigDecimal.valueOf(100000), 12);
 
         assertEquals(expectedPayment, actualPayment);
     }
@@ -60,7 +52,7 @@ class ConveyorServiceImplTest {
     void ConveyorService_CalculateFullCreditInsurance_ReturnInsurance() {
         BigDecimal expectedInsurance = BigDecimal.valueOf(1000).setScale(2, RoundingMode.HALF_UP); // Ожидаемый результат
 
-        BigDecimal actualInsurance = conveyorService.calculateFullCreditInsurance(INSURANCE);
+        BigDecimal actualInsurance = conveyorService.calculateFullCreditInsurance(INSURANCE, BigDecimal.valueOf(100000));
 
         assertEquals(expectedInsurance, actualInsurance);
     }
@@ -69,7 +61,7 @@ class ConveyorServiceImplTest {
     void ConveyorService_CalculatePSK_ReturnPSK() {
         BigDecimal expectedPSK = BigDecimal.valueOf(5.66).setScale(2, RoundingMode.HALF_UP); // Ожидаемый результат
 
-        BigDecimal actualPSK = conveyorService.calculatePSK(INSURANCE);
+        BigDecimal actualPSK = conveyorService.calculatePSK(INSURANCE, BigDecimal.valueOf(100000), BigDecimal.valueOf(8.5),12);
 
         assertEquals(expectedPSK, actualPSK);
     }
@@ -79,7 +71,10 @@ class ConveyorServiceImplTest {
         BigDecimal expectedTotalCost = BigDecimal.valueOf(106663.76).setScale(2, RoundingMode.HALF_UP); // Ожидаемый результат
         BigDecimal insuranceCost = BigDecimal.valueOf(2000); // Выставление полной стоимости страховки для теста
 
-        BigDecimal actualTotalCost = conveyorService.calculateTotalCreditCost(insuranceCost);
+        BigDecimal actualTotalCost = conveyorService.calculateTotalCreditCost(insuranceCost,
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(8.5),
+                12);
 
         assertEquals(expectedTotalCost, actualTotalCost);
     }
@@ -88,7 +83,6 @@ class ConveyorServiceImplTest {
     void ConveyorService_CreatePaymentSchedule_ReturnPaymentScheduleDTO() {
         // Arrange
         BigDecimal monthlyPayment = BigDecimal.valueOf(25444.27).setScale(2, RoundingMode.HALF_UP); // Выставление месячного платежа для теста
-        conveyorService.setCurrentTerm(4);
         List<PaymentScheduleElement> expectedSchedule = new ArrayList<>();
 
         PaymentScheduleElement paymentScheduleElement = new PaymentScheduleElement(
@@ -134,7 +128,10 @@ class ConveyorServiceImplTest {
 
         expectedSchedule.add(3, paymentScheduleElement);
 
-        List<PaymentScheduleElement> actualSchedule = conveyorService.calculatePaymentSchedule(monthlyPayment);
+        List<PaymentScheduleElement> actualSchedule = conveyorService.calculatePaymentSchedule(monthlyPayment,
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(8.5),
+                4 );
 
         assertEquals(expectedSchedule, actualSchedule);
 
