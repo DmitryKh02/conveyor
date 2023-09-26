@@ -54,6 +54,7 @@ jobs:
 
   sonar-cloud:
     name: Build and analyze by sonar cloud
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
