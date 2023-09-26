@@ -53,7 +53,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   sonar-cloud:
-    name: Build and analyze
+    name: Build and analyze by sonar cloud
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
